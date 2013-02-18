@@ -1,0 +1,270 @@
+#!/usr/bin/env perl
+
+use Mojolicious::Lite;
+
+plugin 'TagHelpers';
+
+helper auth => sub {
+	my $self = shift;
+
+	if ($self->param('username') eq 'caroline' and
+		$self->param('password') eq 'French10')
+	{
+		return 1;
+	} 
+};
+
+get '/' => 'home';
+
+get '/home' => sub {
+	my $self = shift;	
+	$self->render('home');
+};
+
+get '/about' => 'about';
+
+get '/interiors-and-furniture' => sub {
+	my $self  = shift;
+	$self->render('interiors-and-furniture');
+};
+
+get '/photography' => sub {
+        my $self = shift;
+        $self->render('photograhy');
+};
+
+get '/art' => sub {
+	my $self = shift;
+	$self->render('art');
+};
+
+get '/contact' => sub {
+	my $self = shift;
+	$self->render('contact');
+};
+
+post '/contact' => sub {
+	my $self  = shift;
+	my $name  = $self->param('contact_name');
+	my $email = $self->param('contact_email');
+	my $msg   = $self->param('contact_message');
+
+	$self->render(text => "$name and email = $email and message = $msg" );
+}; 
+
+get '/login' => sub {
+	my $self = shift;
+	$self->stash(message => 'Please Login');
+	$self->render('login');
+};
+
+post '/admin' => sub {
+	my $self = shift;
+	
+	if (!$self->auth)
+	{
+		$self->stash(message => 'Incorrect Password');
+		$self->render('login');
+	}
+	else
+	{
+		$self->stash(message => 'Welcome Caroline');
+		$self->render('admin');
+	}
+};
+
+app->start;
+
+__DATA__
+
+@@ layouts/wrapper.html.ep
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title><%= title %></title>
+    <link href='http://fonts.googleapis.com/css?family=Exo:100,200,800' rel='stylesheet' type='text/css'>
+    %= javascript '//code.jquery.com/jquery-1.8.3.min.js'
+    <style>
+      body {
+	background: #000 url('/bg.gif') repeat top left; 
+        color: #201B21;
+      }
+      div#container {
+        margin: 0 auto;
+        width: 90%;
+      }
+      header {
+	font-family: "Exo", Helvetica, Arial, sans-serif;
+	padding: 15px;
+	font-size: 150%;
+        font-weight: 100;
+      }
+      header span {
+        float: right;
+	font-size: 160%;
+	font-weight: 100;
+	margin-right: 10px;
+      }
+      header nav ul {
+        list-style: none;
+	padding: 15px;
+	text-align: center;
+      }
+      header nav li {
+        float: left;
+	padding-right: 20px;
+      }
+      header nav li a {
+	color: #201B21;
+        text-decoration: none;
+      }
+      header nav li a:hover {
+        font-weight: 200;
+      }
+      section {
+	font-family: "Exo";
+	padding: 15px;
+      }
+      table#contact {
+	margin: 0 auto;
+      }
+      textarea {
+	border: 2px inset #EEEEEE;
+      }
+      a:visited {
+	color: #201B21; 
+      }
+      submit { 
+        font-family: "Exo", sans-serif; 
+      }
+      .align_right {
+        text-align: right;
+      }
+      .hs_container {
+        position: relative;
+        width: 902px;
+        height: 400px;
+        overflow: hidden;
+        clear: both;
+        border: 2px solid #fff;
+        cursor: pointer;
+        -moz-box-shadow: 1px 1px 3px #222;
+        -webkit-box-shadow: 1px 1px 3px #222;
+        box-shadow: 1px 1px 3px #222;
+      }
+      .hs_container .hs_area{
+        position:absolute;
+        overflow:hidden;
+      }
+      .hs_area img{
+        position:absolute;
+        top:0px;
+        left:0px;
+        display:none;
+      }
+      .hs_area img.hs_visible{
+        display:block;
+        z-index:9999;
+      }
+      .hs_area1 {
+	border-right: 2px solid #fff;
+        width: 449px;
+        height: 404px;
+        top: 0px;
+        left: 0px;
+      }
+      .hs_area2 {
+        width: 451px;
+        height: 200px;
+        top: 0px;
+        left: 451px;
+      }
+      .hs_area3 {
+	border-top: 2px solid #fff;
+        width: 451px;
+        height: 202px;
+        top: 202px;
+        left: 451px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id='container'>
+      <header>
+        <span><%= title %></span>
+        <nav>
+          <ul>
+            <li><a href='/home'>Home</a>/</li>
+	    <li><a href='/about'>About</a>/</li>
+            <li><a href='/contact'>Contact</a>/</li>
+          </ul>
+        </nav>
+      </header>
+      <section>
+        <%= content %>
+      </section>
+    </div>
+  </body>
+</html>
+
+
+@@ about.html.ep
+% title 'Caroline Hart Designs';
+% layout 'wrapper';
+<p>Born in Hertfordshire, England, Caroline Hart was awarded upper class honors (second division) in a degree reading Interior Design at the University of Portsmouth in 2009. She decided to stay in the beautiful southern coast and gained experience working as an Interior Designer for BDP. During her time in the Winchester studio she worked on Healthcare and Education projects.</p>
+<p>In 2011 she took on a new challenge and became a freelance furniture and interior designer. </p>
+<p>Taking a freelance designer position at Johnny Grey Studios, Caroline relished the new challenge of designing furniture and residential interiors. She now over-sees the design and creation of interiors from concept to installation.</p>
+<p>In Carolines free time she enjoys photography, painting, walking and playing badminton.</p>
+
+
+@@ login.html.ep
+% title 'Caroline Hart Designs';
+% layout 'wrapper';
+<%= $message  %>:<br/><br/>
+<form method='post' action='/admin'>
+  <table>
+    <tr>
+      <td>Username:</td>
+      <td><%= text_field 'username' %></td>
+    <tr>
+      <td>Password:</td>
+      <td><%= password_field 'password' %></td>
+    </tr>
+    <tr>  
+      <td colspan='2' class='align_right'>
+        <%= submit_button 'Login', id => 'login' %>
+      </td>
+    </tr>
+  </table>
+</form>
+
+
+@@ admin.html.ep
+% title 'Admin Area';
+% layout 'wrapper';
+Authenticated
+Implement upload area here
+
+
+@@ interiors-and-furniture.html.ep
+% title 'Caroline Hart Designs';
+% layout 'wrapper';
+<br/>interiors
+%= include 'disqus'
+
+
+@@ photography.html.ep
+% title 'Caroline Hart Designs';
+% layout 'wrapper';
+<br/>
+Photography
+%= include 'disqus'
+
+
+@@ art.html.ep
+% title 'Caroline Hart Designs';
+% layout 'wrapper';
+<br/>art
+%= include 'disqus'
+
