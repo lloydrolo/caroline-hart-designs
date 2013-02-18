@@ -1,0 +1,25 @@
+% title 'Caroline Hart Designs.';
+% layout 'wrapper';
+
+<form action="/contact" method="post"> 
+<table id='contact'>
+  <tr>
+    <td>Name:</td>
+    <td><%= text_field 'contact_name', size => 42 %></td>
+  </tr>
+  <tr>
+    <td>Email:</td>
+    <td><%= email_field 'contact_email', size => 42 %></td>
+  <tr>
+    <td>Message:</td>
+    <td><%= text_area 'contact_message', cols => 41 %></td>
+  </tr>
+  <tr>
+    <td class='align_right' colspan='2'>
+      <%= submit_button 'Send', id => 'submit' %>
+    </td>
+  </tr>
+</table>
+</form>
+
+
