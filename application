@@ -8,7 +8,7 @@ helper auth => sub {
 	my $self = shift;
 
 	if ($self->param('username') eq 'caroline' and
-		$self->param('password') eq 'French10')
+		$self->param('password') eq '$ENV{CH_PASS}')
 	{
 		return 1;
 	} 
